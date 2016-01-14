@@ -394,17 +394,8 @@ ActiveRecord::Schema.define(:version => 20160114141015) do
 
   add_index "disciplines_people", ["person_id"], :name => "index_disciplines_people_on_person_id"
 
-  create_table "ds_packs", :force => true do |t|
-    t.string   "title"
-    t.text     "description"
-    t.integer  "status"
-    t.text     "msg"
-    t.integer  "assay_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
 
-  add_index "ds_packs", ["assay_id"], :name => "index_ds_packs_on_assay_id"
+
 
   create_table "event_auth_lookup", :id => false, :force => true do |t|
     t.integer "user_id"
