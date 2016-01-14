@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160112193836) do
+ActiveRecord::Schema.define(:version => 20160114141015) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action"
@@ -361,7 +361,6 @@ ActiveRecord::Schema.define(:version => 20160112193836) do
   add_index "data_files_projects", ["data_file_id", "project_id"], :name => "index_data_files_projects_on_data_file_id_and_project_id"
   add_index "data_files_projects", ["project_id"], :name => "index_data_files_projects_on_project_id"
 
-
   create_table "db_files", :force => true do |t|
     t.binary "data", :limit => 2147483647
   end
@@ -394,6 +393,18 @@ ActiveRecord::Schema.define(:version => 20160112193836) do
   end
 
   add_index "disciplines_people", ["person_id"], :name => "index_disciplines_people_on_person_id"
+
+  create_table "ds_packs", :force => true do |t|
+    t.string   "title"
+    t.text     "description"
+    t.integer  "status"
+    t.text     "msg"
+    t.integer  "assay_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "ds_packs", ["assay_id"], :name => "index_ds_packs_on_assay_id"
 
   create_table "event_auth_lookup", :id => false, :force => true do |t|
     t.integer "user_id"
