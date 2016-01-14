@@ -395,8 +395,6 @@ ActiveRecord::Schema.define(:version => 20160114141015) do
   add_index "disciplines_people", ["person_id"], :name => "index_disciplines_people_on_person_id"
 
 
-
-
   create_table "event_auth_lookup", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "asset_id"
