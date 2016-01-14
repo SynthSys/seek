@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Title:</b>
+  <%= @data_share_pack.title %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @data_share_pack.description %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @data_share_pack.status %>
+</p>
+
+<p>
+  <b>Msg:</b>
+  <%= @data_share_pack.msg %>
+</p>
+
+<p>
+  <b>Assay:</b>
+  <%= @data_share_pack.assay %>
+</p>
+
+
+<%= link_to 'Edit', edit_data_share_pack_path(@data_share_pack) %> |
+<%= link_to 'Back', data_share_packs_path %>

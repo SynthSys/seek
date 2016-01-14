@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+first_data_share:
+  title: First package
+  description: MyText
+  status: 1
+  msg: MyText
+  assay: assay_with_no_study_but_has_some_files
+
+second_data_share:
+  title: Second package
+  description: MyText
+  status: 1
+  msg: MyText
+  assay: assay_with_no_study_but_has_some_files

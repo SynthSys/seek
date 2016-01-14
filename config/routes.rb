@@ -1,6 +1,8 @@
 SEEK::Application.routes.draw do
 
 
+
+
   mount MagicLamp::Genie, :at => (SEEK::Application.config.relative_url_root || "/") + 'magic_lamp'  if defined?(MagicLamp)
   mount Teaspoon::Engine, :at => (SEEK::Application.config.relative_url_root || "/") + "teaspoon" if defined?(Teaspoon)
 
@@ -9,6 +11,7 @@ SEEK::Application.routes.draw do
   get 'searchSwainLab' => 'search_rdf#search'
   post 'searchSwainLab' => 'search_rdf#search'
 
+  resources :data_share_packs
 
 
   resources :scales do
