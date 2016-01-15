@@ -1,4 +1,6 @@
 <% if @investigation.can_manage? %>
+    <%= button_link_to("Export to DS", 'export', new_data_share_pack_path(:snapshot_id=>@snapshot.id)) %>
+
     <% if @snapshot.has_doi? %>
         <% if @snapshot.can_export_to_zenodo? %>
             <%= button_link_to("Export to Zenodo", 'snapshot_export', @zenodo_oauth_client.authorize_url(export_investigation_snapshot_path(@investigation, @snapshot.snapshot_number))) %>

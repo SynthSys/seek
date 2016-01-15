@@ -8,8 +8,8 @@ class DataSharePackTest < ActiveSupport::TestCase
   # end
 
   def setup
-    assay = assays(:metabolomics_assay)
-    @pack = DataSharePack.new(title: "Test DataSharePack", description: "DataSet generated in experiment AT0089.\\nIncluded raw and processed data files",assay_id: assay.id)
+    snapshot = create_snapshot
+    @pack = DataSharePack.new(title: "Test DataSharePack", description: "DataSet generated in experiment AT0089.\\nIncluded raw and processed data files",snapshot_id: snapshot.id)
   end
 
   test "should be valid" do
@@ -36,14 +36,36 @@ class DataSharePackTest < ActiveSupport::TestCase
     assert !@pack.valid?
   end
 
-  test "assay id should be present" do
-    @pack.assay_id = nil
+  test "snapshot id should be present" do
+    @pack.snapshot_id = nil
     assert !@pack.valid?
   end
 
-  test "assay should be present" do
-    @pack.assay = nil
+  test "snapshot should be present" do
+    @pack.snapshot = nil
     assert !@pack.valid?
   end
+
+  test "parent same snapshot parent" do
+    assert_not_nil @pack.snapshot
+    assert_not_nil @pack.snapshot.parent
+
+    assert_equal @pack.snapshot.parent, @pack.parent
+  end
+
+  test "parent nil for nil snapshot" do
+    @pack.snapshot = nil
+    assert_nil @pack.parent
+  end
+
+
+  private
+
+  def create_snapshot
+    @user = Factory(:user)
+    @investigation = Factory(:investigation, :description => 'not blank', :policy => Factory(:publicly_viewable_policy), :contributor => @user.person)
+    @snapshot = @investigation.create_snapshot
+  end
+
 
 end

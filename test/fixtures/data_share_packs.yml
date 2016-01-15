@@ -5,11 +5,9 @@ first_data_share:
   description: MyText
   status: 1
   msg: MyText
-  assay: assay_with_no_study_but_has_some_files
 
 second_data_share:
   title: Second package
   description: MyText
   status: 1
   msg: MyText
-  assay: assay_with_no_study_but_has_some_files

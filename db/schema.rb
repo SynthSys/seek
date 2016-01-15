@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160114184235) do
+ActiveRecord::Schema.define(:version => 20160115154401) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action"
@@ -366,12 +366,10 @@ ActiveRecord::Schema.define(:version => 20160114184235) do
     t.text     "description"
     t.integer  "status"
     t.text     "msg"
-    t.integer  "assay_id"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.integer  "snapshot_id"
   end
-
-  add_index "data_share_packs", ["assay_id"], :name => "index_data_share_packs_on_assay_id"
 
   create_table "db_files", :force => true do |t|
     t.binary "data", :limit => 2147483647

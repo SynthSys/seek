@@ -25,13 +25,13 @@ class DataSharePacksController < ApplicationController
   # GET /data_share_packs/new.json
   def new
 
-    logger.info "\nNew data pack with assay id: #{params[:assay_id]}\n"
+    logger.info "\nNew data pack with snapshot id: #{params[:snapshot_id]}\n"
 
-    assay =  Assay.find(params[:assay_id])
+    snapshot =  Snapshot.find(params[:snapshot_id])
     @data_share_pack = DataSharePack.new
-    @data_share_pack.title =assay.title
-    @data_share_pack.description=assay.description
-    @data_share_pack.assay = assay
+    @data_share_pack.title =snapshot.parent.title
+    @data_share_pack.description=snapshot.parent.description
+    @data_share_pack.snapshot = snapshot
 
     respond_to do |format|
       format.html # new.html.erb
@@ -62,19 +62,25 @@ class DataSharePacksController < ApplicationController
 
   # PUT /data_share_packs/1
   # PUT /data_share_packs/1.json
+=begin
   def update
     @data_share_pack = DataSharePack.find(params[:id])
 
+    logger.info "UPDATE"
+    logger.info params[:data_share_pack]
     respond_to do |format|
       if @data_share_pack.update_attributes(params[:data_share_pack])
+        logger.info "In update"
         format.html { redirect_to @data_share_pack, notice: 'Data share pack was successfully updated.' }
         format.json { head :no_content }
       else
+        logger.info "No update"
         format.html { render action: "edit" }
         format.json { render json: @data_share_pack.errors, status: :unprocessable_entity }
       end
     end
   end
+=end
 
   # DELETE /data_share_packs/1
   # DELETE /data_share_packs/1.json
