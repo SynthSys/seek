@@ -11,26 +11,79 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :title %><br />
-    <%= f.text_field :title %>
-  </div>
-  <div class="field">
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </div>
-  <!--<div class="field">
-    <%#f.label :status %><br />
-    <%#f.number_field :status %>
-  </div>-->
-    <!--<div class="field">
-    <%# f.label :msg %><br />
-    <%# f.text_area :msg %>
-  </div>-->
-  <!--<div class="field">
-    <%# f.label :assay %><br />
-    <%# f.text_field :assay %>
-  </div>-->
+    <div class="field">
+      <%= f.label :collection %><br />
+      <%= if @collections
+            f.select(:collection, options_for_select(@collections))
+          end
+      %>
+    </div>
+
+    <div class="field">
+      <%= f.label :funder %><br />
+      <%= if @funders
+            f.select(:funder, options_for_select(@funders))
+          end
+      %>
+    </div>
+
+    <div class="field">
+      <%= f.label :license %><br />
+      <%= if @licences
+            f.select(:license, options_for_select(@licences))
+          end
+      %>
+    </div>
+
+    <div class="field">
+      <%= f.label :publisher %><br />
+      <%= if @publishers
+            f.select(:publisher, options_for_select(@publishers))
+          end
+      %>
+    </div>
+
+    <div class="field">
+      <%= f.label :set_type %><br />
+      <%= if @setTypes
+            f.select(:settype, options_for_select(@setTypes))
+          end
+      %>
+    </div>
+
+
+    <div class="field">
+      <%= f.label :title %><br />
+      <%= f.text_field :title %>
+    </div>
+
+    <div class="field">
+      <%= f.label :description %><br />
+      <%= f.text_area :description %>
+    </div>
+
+    <div class="field">
+      <%= f.label :files_description %><br />
+      <%= f.text_area :toc %>
+    </div>
+
+    <div class="field">
+      <%= f.label :creators %><br />
+      <%= f.text_field :creators %>
+    </div>
+
+    <div class="field">
+      <%= f.label :keywords %><br />
+      <%= f.text_field :keywords %>
+    </div>
+
+    <div class="field">
+      <%= f.label :subject %><br />
+      <%= f.text_field :subject %>
+    </div>
+
+
+
     <%= f.hidden_field :snapshot_id %>
   <div class="actions">
     <%= f.submit %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160115154401) do
+ActiveRecord::Schema.define(:version => 20160115174655) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action"
@@ -362,14 +362,31 @@ ActiveRecord::Schema.define(:version => 20160115154401) do
   add_index "data_files_projects", ["project_id"], :name => "index_data_files_projects_on_project_id"
 
   create_table "data_share_packs", :force => true do |t|
-    t.string   "title"
-    t.text     "description"
-    t.integer  "status"
+    t.string   "title",    :null => false
+    t.text     "description",    :null => false
+    t.integer  "status",    :null => false
     t.text     "msg"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.integer  "snapshot_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "snapshot_id",    :null => false
+    t.string   "collection",    :null => false
+    t.string   "funder",    :null => false
+    t.string   "depositor",    :null => false
+    t.string   "publisher",    :null => false
+    t.string   "settype",    :null => false
+    t.string   "license",    :null => false
+    t.string   "creators"
+    t.string   "keywords"
+    t.string   "subject"
+    t.text     "toc"
+    t.string   "referenced_by"
+    t.string   "version_of"
+    t.string   "supersedes"
+    t.string   "source"
+    t.date     "embargo"
   end
+
+  add_index "data_share_packs", ["snapshot_id"], :name => "index_data_share_packs_on_snapshot_id"
 
   create_table "db_files", :force => true do |t|
     t.binary "data", :limit => 2147483647

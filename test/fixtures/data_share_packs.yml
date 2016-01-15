@@ -2,12 +2,32 @@
 
 first_data_share:
   title: First package
-  description: MyText
+  description: AT0089 data sets from R+L experiment.\nOne day seedlings in different photoperiods
   status: 1
-  msg: MyText
+  collection: SWORD test
+  funder: BBSRC
+  depositor: Tomasz
+  publisher: University of Edinburgh. School of Biology
+  settype: dataset
+  license: Creative Commons Attribution 4.0 International licence
+  creators: Tomasz Zielinski, Andrew Millar
+  keywords: clock, arabidopsis
+  subject: Circadian experiment
+  toc: ATxxx files contain raw data.\n pedro.xml metadata description
+
 
 second_data_share:
   title: Second package
   description: MyText
   status: 1
-  msg: MyText
+  msg: Problem with sumibssion
+  collection: SWORD test
+  funder: EPSRC
+  depositor: Bob Jail
+  publisher: University of Edinburgh. School of Biology
+  settype: dataset
+  license: Creative Commons Attribution 4.0 International licence
+  creators: Bob Jail, Tomasz Zielinski
+  keywords: clock, lucipherase
+  subject: Circadian experiment
+  toc: ATxxx files contain raw data.\n pedro.xml metadata description

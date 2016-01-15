@@ -9,7 +9,8 @@ class DataSharePackTest < ActiveSupport::TestCase
 
   def setup
     snapshot = create_snapshot
-    @pack = DataSharePack.new(title: "Test DataSharePack", description: "DataSet generated in experiment AT0089.\\nIncluded raw and processed data files",snapshot_id: snapshot.id)
+    @pack = data_share_packs(:first_data_share)
+    @pack.snapshot = snapshot
   end
 
   test "should be valid" do
@@ -33,6 +34,36 @@ class DataSharePackTest < ActiveSupport::TestCase
 
   test "description should be present" do
     @pack.description = "     "
+    assert !@pack.valid?
+  end
+
+  test "funder should be present" do
+    @pack.funder = " "
+    assert !@pack.valid?
+  end
+
+  test "collection should be present" do
+    @pack.collection = " "
+    assert !@pack.valid?
+  end
+
+  test "license should be present" do
+    @pack.license = " "
+    assert !@pack.valid?
+  end
+
+  test "depositor should be present" do
+    @pack.depositor = " "
+    assert !@pack.valid?
+  end
+
+  test "publisher should be present" do
+    @pack.publisher = " "
+    assert !@pack.valid?
+  end
+
+  test "settype should be present" do
+    @pack.settype = " "
     assert !@pack.valid?
   end
 

@@ -1,4 +1,15 @@
 class DataSharePacksController < ApplicationController
+
+
+  @@knownFunders = %w(BBSRC EPSRC)
+
+  @@knownLicenses = ['Creative Commons Attribution 4.0 International licence']
+
+  @@knownCollections = ['SWORD test']
+
+  @@knownPublishers = ['University of Edinburgh. School of Biology']
+
+  @@knownSetTypes = ['dataset']
   # GET /data_share_packs
   # GET /data_share_packs.json
   def index
@@ -33,6 +44,12 @@ class DataSharePacksController < ApplicationController
     @data_share_pack.description=snapshot.parent.description
     @data_share_pack.snapshot = snapshot
 
+    @funders = @@knownFunders
+    @licences = @@knownLicenses
+    @collections = @@knownCollections
+    @publishers = @@knownPublishers
+    @setTypes = @@knownSetTypes
+
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @data_share_pack }
@@ -49,11 +66,17 @@ class DataSharePacksController < ApplicationController
   def create
     @data_share_pack = DataSharePack.new(params[:data_share_pack])
 
+    depositor = current_person.name
+
+    @data_share_pack.depositor = depositor
+    @data_share_pack.status = 1
+
     respond_to do |format|
       if @data_share_pack.save
-        format.html { redirect_to @data_share_pack, notice: 'Data share pack was successfully created.' }
+        format.html { redirect_to @data_share_pack, notice: 'Request for DataShare export was queued.' }
         format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
       else
+        logger.error "ERROR: #{@data_share_pack.errors.full_messages}"
         format.html { render action: "new" }
         format.json { render json: @data_share_pack.errors, status: :unprocessable_entity }
       end
@@ -93,4 +116,6 @@ class DataSharePacksController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+
 end
