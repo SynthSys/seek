@@ -6,6 +6,9 @@ gem "rdoc"
 #added by TZ to fix problem with compiling the assets without js env.
 gem 'therubyracer', :platforms => :ruby
 
+#added by TZ to allow data export with Sword
+gem 'sword2ruby'
+
 gem "feedjira","~>1"
 gem "google-analytics-rails"
 gem 'hpricot',"~>0.8.2"
