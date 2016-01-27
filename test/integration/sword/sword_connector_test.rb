@@ -62,6 +62,8 @@ class SwordConnectorTest < ActiveSupport::TestCase
 
   end
 
+
+=begin
   def test_upload
     connection = @connector.connect
     colName = "CATALOGING"
@@ -77,6 +79,7 @@ class SwordConnectorTest < ActiveSupport::TestCase
     puts "deposit_receipt.entry.to_s: #{deposit_receipt.entry.to_s}"
     puts "deposit_receipt.entry.alternate_uri: #{deposit_receipt.entry.alternate_uri}"
   end
+=end
 
   def test_swordClientOverwrite
     assert Atom::Service.zielu
