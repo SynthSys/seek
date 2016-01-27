@@ -9,6 +9,7 @@ module Synthsys
 
       class Config < Struct.new(:username, :password, :uri); end
 
+      class NotFound < RuntimeError; end
 
       def connect
 
@@ -27,6 +28,26 @@ module Synthsys
         @service = Atom::Service.new(@config.uri, @connection)
 
 
+      end
+
+      def findCollection(name,connection)
+        connection.collections.each do |col|
+          if col.title.to_s == name
+            return col
+          end
+        end
+        raise NotFound.new "Collection: #{name} not found"
+
+      end
+
+      def upload(file_path,title,collection_name,connection)
+
+        collection = findCollection(collection_name,connection)
+        deposit_receipt = collection.post_media!(:filepath=>file_path, :content_type=>"text/plain")
+        puts "Deposited"
+        deposit_receipt.entry.title = title
+        deposit_receipt.entry.put!
+        return deposit_receipt
       end
 
       def read_configuration

@@ -32,9 +32,8 @@ module Sword2Ruby
 
 
       if res.is_a? Net::HTTPSuccess
-        puts res.body
-        res.validate_content_type(["application/atomsvc+xml"])
-        #res.validate_content_type(["application/atomserv+xml"])
+        #res.validate_content_type(["application/atomsvc+xml"])
+        res.validate_content_type(["application/atomserv+xml"])
 
         service = self.class.parse(res.body, base, self)
 
@@ -57,3 +56,25 @@ module Sword2Ruby
 
   end #class
 end #module
+
+
+require "atom/http"
+require "atom/feed"
+
+module Atom
+
+  class Collection < Atom::Element
+
+    def_set :href do |href|
+      @href = href
+      #@feed = Atom::Feed.new @href, @http
+      @feed = Atom::Feed.new {@href}
+    end
+
+    #Returns true, for diagnostic reasons to check if SwordClient methods redefinition was picked up during initialization
+    def self.zielu
+      return true
+    end
+
+   end
+end
