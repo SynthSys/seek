@@ -73,6 +73,7 @@ class DataSharePacksController < ApplicationController
 
     respond_to do |format|
       if @data_share_pack.save
+        SwordExportJob.new(@data_share_pack).queue_job
         format.html { redirect_to @data_share_pack, notice: 'Request for DataShare export was queued.' }
         format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
       else
