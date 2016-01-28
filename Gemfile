@@ -7,7 +7,8 @@ gem "rdoc"
 gem 'therubyracer', :platforms => :ruby
 
 #added by TZ to allow data export with Sword
-gem 'sword2ruby'
+#gem 'sword2ruby'
+
 
 gem "feedjira","~>1"
 gem "google-analytics-rails"

@@ -1,3 +1,4 @@
+=begin
 require 'atom/service'
 
 module Sword2Ruby
@@ -78,3 +79,5 @@ module Atom
 
    end
 end
+
+=end

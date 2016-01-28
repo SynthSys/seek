@@ -1,8 +1,8 @@
 require 'test/unit'
 require 'test_helper'
-require 'sword2ruby'
+#require 'sword2ruby'
 
-class SwordConnectorTest < ActiveSupport::TestCase
+class SwordConnectorTest #< ActiveSupport::TestCase
 
 
   # Called before every test method runs. Can be used
