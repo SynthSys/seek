@@ -362,19 +362,19 @@ ActiveRecord::Schema.define(:version => 20160115174655) do
   add_index "data_files_projects", ["project_id"], :name => "index_data_files_projects_on_project_id"
 
   create_table "data_share_packs", :force => true do |t|
-    t.string   "title",    :null => false
-    t.text     "description",    :null => false
-    t.integer  "status",    :null => false
+    t.string   "title",         :null => false
+    t.text     "description",   :null => false
+    t.integer  "status",        :null => false
     t.text     "msg"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
-    t.integer  "snapshot_id",    :null => false
+    t.integer  "snapshot_id",   :null => false
     t.string   "collection",    :null => false
-    t.string   "funder",    :null => false
-    t.string   "depositor",    :null => false
-    t.string   "publisher",    :null => false
-    t.string   "settype",    :null => false
-    t.string   "license",    :null => false
+    t.string   "funder",        :null => false
+    t.string   "depositor",     :null => false
+    t.string   "publisher",     :null => false
+    t.string   "settype",       :null => false
+    t.string   "license",       :null => false
     t.string   "creators"
     t.string   "keywords"
     t.string   "subject"
@@ -420,18 +420,6 @@ ActiveRecord::Schema.define(:version => 20160115174655) do
   end
 
   add_index "disciplines_people", ["person_id"], :name => "index_disciplines_people_on_person_id"
-
-  create_table "ds_packs", :force => true do |t|
-    t.string   "title"
-    t.text     "description"
-    t.integer  "status"
-    t.text     "msg"
-    t.integer  "assay_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "ds_packs", ["assay_id"], :name => "index_ds_packs_on_assay_id"
 
   create_table "event_auth_lookup", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -1278,13 +1266,6 @@ ActiveRecord::Schema.define(:version => 20160115174655) do
     t.string   "scalable_type"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
-  end
-
-  create_table "scrab_packs", :force => true do |t|
-    t.string   "title"
-    t.text     "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
   end
 
   create_table "sessions", :force => true do |t|
