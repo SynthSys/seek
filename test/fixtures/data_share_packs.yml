@@ -4,7 +4,7 @@ first_data_share:
   title: First package
   description: AT0089 data sets from R+L experiment.\nOne day seedlings in different photoperiods
   status: 1
-  collection: SWORD test
+  collection: Sword
   funder: BBSRC
   depositor: Tomasz
   publisher: University of Edinburgh. School of Biology
@@ -21,7 +21,7 @@ second_data_share:
   description: MyText
   status: 1
   msg: Problem with sumibssion
-  collection: SWORD test
+  collection: Sword
   funder: EPSRC
   depositor: Bob Jail
   publisher: University of Edinburgh. School of Biology

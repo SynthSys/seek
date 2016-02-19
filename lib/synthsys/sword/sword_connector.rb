@@ -62,6 +62,7 @@ module Synthsys
           @config.password = "dspace"
           @config.uri = "http://demo.dspace.org/swordv2/servicedocument"
 
+
           @alreadyConfigured = true
           return @config
         else

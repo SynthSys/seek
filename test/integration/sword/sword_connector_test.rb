@@ -1,8 +1,11 @@
+
+=begin
+
 require 'test/unit'
 require 'test_helper'
-#require 'sword2ruby'
+require 'sword2ruby'
 
-class SwordConnectorTest #< ActiveSupport::TestCase
+class SwordConnectorTest < ActiveSupport::TestCase
 
 
   # Called before every test method runs. Can be used
@@ -63,7 +66,7 @@ class SwordConnectorTest #< ActiveSupport::TestCase
   end
 
 
-=begin
+begin
   def test_upload
     connection = @connector.connect
     colName = "CATALOGING"
@@ -79,7 +82,7 @@ class SwordConnectorTest #< ActiveSupport::TestCase
     puts "deposit_receipt.entry.to_s: #{deposit_receipt.entry.to_s}"
     puts "deposit_receipt.entry.alternate_uri: #{deposit_receipt.entry.alternate_uri}"
   end
-=end
+end
 
   def test_swordClientOverwrite
     assert Atom::Service.zielu
@@ -90,3 +93,6 @@ class SwordConnectorTest #< ActiveSupport::TestCase
 
 
 end
+
+=end
+
