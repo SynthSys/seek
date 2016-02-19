@@ -12,6 +12,7 @@ module Synthsys
         #puts uri.path
 
           req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
+          #req.basic_auth user, pass
           req.body = content
           res = Net::HTTP.start(uri.hostname, uri.port) do |http|
             http.request(req)
