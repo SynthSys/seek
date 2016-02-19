@@ -368,7 +368,7 @@ ActiveRecord::Schema.define(:version => 20160115174655) do
     t.text     "msg"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
-    t.integer  "snapshot_id",   :null => false
+    t.integer  "snapshot_id",   :default => 0, :null => false
     t.string   "collection",    :null => false
     t.string   "funder",        :null => false
     t.string   "depositor",     :null => false
