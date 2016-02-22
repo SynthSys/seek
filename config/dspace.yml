@@ -1,0 +1,13 @@
+#change settings where appropriate, and then save as virtuoso_settings.yml
+
+production:
+  uri:
+  deposits_dir:
+
+development:
+  uri: http://localhost:8550/deposit
+  deposits_dir: /localdisk/seek/DSpaceUpload/DEPOSITS
+
+test:
+  uri: http://localhost:8550/deposit
+  deposits_dir: /localdisk/seek/DSpaceUpload/DEPOSITS

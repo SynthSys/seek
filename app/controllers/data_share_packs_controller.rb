@@ -5,7 +5,7 @@ class DataSharePacksController < ApplicationController
 
   @@knownLicenses = ['Creative Commons Attribution 4.0 International licence']
 
-  @@knownCollections = ['SWORD test']
+  @@knownCollections = ['Sword','Wrong']
 
   @@knownPublishers = ['University of Edinburgh. School of Biology']
 
@@ -73,9 +73,28 @@ class DataSharePacksController < ApplicationController
 
     respond_to do |format|
       if @data_share_pack.save
-        SwordExportJob.new(@data_share_pack).queue_job
-        format.html { redirect_to @data_share_pack, notice: 'Request for DataShare export was queued.' }
-        format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
+        #SwordExportJob.new(@data_share_pack).queue_job
+        begin
+          logger.info "\nSending new deposit of : #{@data_share_pack.id}\n"
+          connector = Synthsys::Dspace::DspaceUploaderConnector.new
+          resp = connector.deposit(@data_share_pack)
+
+          format.html { redirect_to @data_share_pack, notice: "Request for DataShare export was exported: #{resp}." }
+          format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
+
+        rescue Exception => e
+          logger.error "ERROR in deposit: #{e}"
+          e.backtrace.each do |s|
+            logger.error(s)
+          end
+          format.html { render action: "new", notice: "Error in export #{e}" }
+          format.json { render json: @data_share_pack.errors, status: :unprocessable_entity }
+
+        end
+
+
+        #format.html { redirect_to @data_share_pack, notice: 'Request for DataShare export was queued.' }
+        #format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
       else
         logger.error "ERROR: #{@data_share_pack.errors.full_messages}"
         format.html { render action: "new" }

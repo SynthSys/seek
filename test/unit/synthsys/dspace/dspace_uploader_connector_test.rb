@@ -32,8 +32,9 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
   def test_data_share_to_deposit
 
     dataSharePack = @dataSharePack
+    depositFile = Tempfile.new("a.file")
 
-    deposit = @connector.prepare_deposit dataSharePack
+    deposit = @connector.prepare_deposit(dataSharePack,depositFile)
     assert_not_nil deposit
 
     assert_equal dataSharePack.collection, deposit[:collection]
@@ -50,7 +51,8 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
     assert_equal 'Dataset', deposit[:type]
 
     assert_not_nil deposit[:filePath]
-    assert File.file? deposit[:filePath]
+    assert_equal File.basename(depositFile),deposit[:filePath]
+
     assert_equal 'application/zip', deposit[:fileType]
     assert deposit[:fileName].end_with?('ro.zip')
 
@@ -66,24 +68,51 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
   def test_prepareDataPackage
 
-    content_blob = create_tmp_blob
-    @dataSharePack.snapshot.content_blob = content_blob
-    path = @connector.prepareDataPackage(@dataSharePack)
-    assert File.file?(path)
+    Dir.mktmpdir do |dir|
 
-    assert_raise Exception do
-      File.delete(path)
-      assert !File.file?(path)
-      path = @connector.prepareDataPackage(@dataSharePack)
+
+      content_blob = create_tmp_blob
+      blobPath = content_blob.filepath
+      @dataSharePack.snapshot.content_blob = content_blob
+      path = @connector.prepareDataPackage(@dataSharePack,dir)
+      assert File.file?(path)
+      assert_equal File.size(blobPath), File.size?(path)
+      assert path.kind_of? Tempfile
+
+      assert_raise Exception do
+        File.delete(blobPath)
+        assert !File.file?(blobPath)
+        path = @connector.prepareDataPackage(@dataSharePack,dir)
+      end
+
+
+      assert_raise Exception do
+        @dataSharePack.snapshot.content_blob = nil
+        path = @connector.prepareDataPackage(@dataSharePack,dir)
+      end
+
+
     end
-
-
-    assert_raise Exception do
-      @dataSharePack.snapshot.content_blob = nil
-      path = @connector.prepareDataPackage(@dataSharePack)
-    end
-
   end
+
+  def test_make_deposit_copy
+    Dir.mktmpdir do |dir|
+
+      tmpPath = File.join(dir,'a.file.tmp')
+      File.write(tmpPath, 'Some test data XXX')
+
+      cpyFile = @connector.makeDepositCopy(tmpPath,dir)
+      assert_not_nil cpyFile
+      assert File.file? cpyFile.path
+
+      inDir = File.join(dir,File.basename(cpyFile))
+      assert File.file? inDir
+
+      assert_equal File.size?(tmpPath), cpyFile.size
+
+    end
+  end
+
 
   def test_makeDepositFileName
 
@@ -104,6 +133,19 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
     config = @connector.read_configuration
     assert_not_nil config
     assert_equal 'http://localhost:8550/deposit',config.uri
+    assert_equal '/localdisk/seek/DSpaceUpload/DEPOSITS',config.deposits_dir
+  end
+
+  def test_verifies_configuration
+    #I could not access the Config class on configuration so doing it like that
+    config1 = Struct.new(:uri,:deposits_dir)
+    config = config1.new
+
+    Dir.mktmpdir do |dir|
+      config.deposits_dir = dir
+      @connector.verify_config config
+    end
+    assert_raise(RuntimeError) {@connector.verify_config config}
   end
 
   private

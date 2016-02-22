@@ -16,6 +16,7 @@ config/virtuoso_settings.yml
 config/virtuoso_settings_mac.yml
 config/initializers/taverna_server.rb
 config/sunspot.yml
+config/dspace.yml
 
 *.DS_Store
 log/*.log*

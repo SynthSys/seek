@@ -4,7 +4,7 @@ module Synthsys
 
     class DspaceUploaderConnector
 
-      class Config < Struct.new(:uri); end
+      class Config < Struct.new(:uri,:deposits_dir); end
 
       class DepositError < RuntimeError; end
 
@@ -13,9 +13,20 @@ module Synthsys
 
         poster = Synthsys::Dspace::Poster.new
 
-        deposit = prepare_deposit(dataSharePack)
+        depositFile = prepareDataPackage(dataSharePack)
+        begin
+          deposit = prepare_deposit(dataSharePack,depositFile)
 
-        response = poster.post(@config.uri,deposit.to_json)
+          do_deposition(poster,@config.uri,deposit.to_json)
+        ensure
+          depositFile.close
+          depositFile.unlink
+        end
+      end
+
+
+      def do_deposition(poster,uri,deposit_string)
+        response = poster.post(uri,deposit_string)
 
         case response
           when Net::HTTPSuccess then
@@ -33,7 +44,8 @@ module Synthsys
 
       end
 
-      def prepare_deposit(dataSharePack)
+
+      def prepare_deposit(dataSharePack,depositFile)
 
         deposit = {
             collection: dataSharePack.collection,
@@ -51,19 +63,21 @@ module Synthsys
             type: "Dataset"
         }
 
+        deposit[:filePath] = File.basename(depositFile)
+        deposit[:fileType] = 'application/zip'
+        deposit[:fileName] = makeDepositFileName(dataSharePack)
+        return deposit
+
         #TODO deal with source link and dates
         #public String source;
         #public String createdAtStr;
         #public String updatedAtStr;
 
-        deposit[:filePath] = prepareDataPackage(dataSharePack)
-        deposit[:fileType] = 'application/zip'
-        deposit[:fileName] = makeDepositFileName(dataSharePack)
-        return deposit
+
 
       end
 
-      def prepareDataPackage(dataSharePack)
+      def prepareDataPackage(dataSharePack,deposits_dir = @config.deposits_dir)
         content = dataSharePack.snapshot.content_blob
         if content == nil
           raise Exception.new "No content blob in snapshot: #{dataSharePack.snapshot.id}"
@@ -72,7 +86,16 @@ module Synthsys
         if !File.file?(path)
           raise Exception.new "Content file #{path} does not exists for snapshot: #{dataSharePack.snapshot.id}"
         end
-        return path
+        #return path
+        return makeDepositCopy(path,deposits_dir)
+      end
+
+      def makeDepositCopy(path,deposits_dir)
+
+         depositFile = Tempfile.new(File.basename(path), deposits_dir)
+         FileUtils.copy(path,depositFile.path)
+         return depositFile
+
       end
 
       def makeDepositFileName(dataSharePack)
@@ -82,14 +105,13 @@ module Synthsys
 
       def read_configuration
         if configured?
-          #y = YAML.load_file(config_path)
-          #@config=Config.new
-          #@config.username=y[Rails.env]["username"]
-          #@config.password=y[Rails.env]["password"]
-          #@config.uri=y[Rails.env]["uri"]
-          @config = Config.new
-          @config.uri = 'http://localhost:8550/deposit'
-
+          y = YAML.load_file(config_path)
+          @config=Config.new
+          @config.uri=y[Rails.env]["uri"]
+          @config.deposits_dir=y[Rails.env]["deposits_dir"]
+          #@config = Config.new
+          #@config.uri = 'http://localhost:8550/deposit'
+          verify_config(@config)
           @alreadyConfigured = true
           return @config
         else
@@ -97,10 +119,30 @@ module Synthsys
         end
       end
 
+      def verify_config(configuration)
+        if !File.directory?(configuration.deposits_dir)
+          raise "#{configuration.deposits_dir} does not point to a valid dir"
+        end
+        if !File.writable?(configuration.deposits_dir)
+          raise "Cannot write to deposits dir: #{configuration.deposits_dir}"
+        end
+
+      end
+
       def configured?
-        #File.exists?(config_path) && enabled_for_environment?
-        true
+        File.exists?(config_path) && enabled_for_environment?
+        #true
+      end
+
+      def config_path
+        File.join(Rails.root,"config","dspace.yml")
+      end
+
+      def enabled_for_environment?
+        y = YAML.load_file(config_path)
+        !y[Rails.env].nil? && !y[Rails.env]["disabled"]
       end
     end
   end
+
 end
