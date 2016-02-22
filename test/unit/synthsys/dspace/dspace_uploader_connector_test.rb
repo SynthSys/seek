@@ -26,7 +26,7 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
     #resp = @connector.deposit(@dataSharePack)
     #assert resp == true
-    fail "Should failed if run"
+    #fail "Should failed if run"
   end
 
   def test_data_share_to_deposit

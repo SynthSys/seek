@@ -10,6 +10,7 @@ class PosterTest < ActiveSupport::TestCase
     # Do nothing
   end
 
+=begin
   def test_handles_wrong_addr
 
     url = "http://turnip1.bio.ed.ac.uk:8550/deposit"
@@ -22,5 +23,6 @@ class PosterTest < ActiveSupport::TestCase
 
 
   end
+=end
 
 end
