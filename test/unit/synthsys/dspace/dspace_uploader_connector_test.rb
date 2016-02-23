@@ -4,10 +4,34 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
   fixtures :all
 
+  class MockPoster
+
+    def initialize
+      @posted = 0
+      @content = nil
+    end
+
+    def post(url,content)
+      @posted+=1
+      @content = content;
+      return true
+    end
+
+    def posted
+      return @posted
+    end
+
+    def content
+      return @content
+    end
+  end
+
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
-    @connector = Synthsys::Dspace::DspaceUploaderConnector.new
+    @poster = MockPoster.new
+
+    @connector = Synthsys::Dspace::DspaceUploaderConnector.new(@poster,nil)
     @dataSharePack = data_share_packs(:first_data_share)
     @dataSharePack.snapshot = create_snapshot
   end
@@ -19,15 +43,52 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
     # Do nothing
   end
 
+  def test_INSTANCE
+
+    instance = Synthsys::Dspace::DspaceUploaderConnector.INSTANCE
+    assert_not_nil instance
+
+    instance2 = Synthsys::Dspace::DspaceUploaderConnector.INSTANCE
+    assert instance.equal?(instance2)
+  end
+
   def test_deposit
 
     content_blob = create_tmp_blob
     @dataSharePack.snapshot.content_blob = content_blob
 
-    #resp = @connector.deposit(@dataSharePack)
-    #assert resp == true
-    #fail "Should failed if run"
+    assert_difference ->{ @poster.posted },1 do
+      resp = @connector.deposit(@dataSharePack)
+      assert resp
+    end
+
   end
+
+
+=begin
+  def test_do_deposition
+
+    poster = Synthsys::Dspace::Poster.new
+    deposit = 'A kuku matutu'
+    uri = 'http://localhost:8550/testservice'
+
+    stub_request(:post, uri).
+        with(:body => deposit)
+
+    assert @connector.do_deposition(poster,uri,deposit)
+
+    body = 'Wrong class'
+    msg = "Deposit failed:\n #{body}"
+
+    assert_raise_with_message(Synthsys::Dspace::DspaceUploaderConnector::DepositError,msg) do
+      stub_request(:post, uri).
+          with(:body => deposit).
+          to_return(:body => body, :status => [400, 'Bad Request'])
+
+      @connector.do_deposition(poster,uri,deposit)
+    end
+  end
+=end
 
   def test_data_share_to_deposit
 
@@ -138,8 +199,9 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
   def test_verifies_configuration
     #I could not access the Config class on configuration so doing it like that
-    config1 = Struct.new(:uri,:deposits_dir)
-    config = config1.new
+    #config1 = Struct.new(:uri,:deposits_dir)
+    #config = config1.new
+    config = Synthsys::Dspace::DspaceUploaderConnector::Config.new
 
     Dir.mktmpdir do |dir|
       config.deposits_dir = dir

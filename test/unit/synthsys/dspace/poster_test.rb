@@ -10,19 +10,94 @@ class PosterTest < ActiveSupport::TestCase
     # Do nothing
   end
 
-=begin
-  def test_handles_wrong_addr
+  test "returns true for success with empty body" do
 
-    url = "http://turnip1.bio.ed.ac.uk:8550/deposit"
-    payload = '{"collection":"Sword","title":"First package","description":"AT0089 data sets from R+L experiment.\\nOne day seedlings in different photoperiods","funder":"BBSRC","depositor":"Tomasz","publisher":"University of Edinburgh. School of Biology","creators":"Tomasz Zielinski, Andrew Millar","keywords":"clock, arabidopsis","subject":"Circadian experiment","toc":"ATxxx files contain raw data.\\n pedro.xml metadata description","licence":"Creative Commons Attribution 4.0 International licence","type":"Dataset","filePath":"/localdisk/seek/investigation-11-2.ro.zip","fileName":"investigation-11-2.ro.zip","fileType":"application/zip"}'
+    content = 'A kuku matutu'
+    url = 'http://localhost:8550/testservice'
 
-    resp = @poster.post(url,payload)
-    puts resp.class
-    puts resp.body
-    puts resp
+    stub_request(:post, url).
+        with(:body => content)
 
+    resp = @poster.post(url,content)
+    assert resp
+
+    stub_request(:post, url).
+        with(:body => content).
+        to_return(:body => "")
+
+    resp = @poster.post(url,content)
+    assert resp
 
   end
-=end
+
+  test "returns body content for success with a body" do
+
+    content = 'A kuku matutu'
+    url = 'http://localhost:8550/testservice'
+
+    stub_request(:post, url).
+        with(:body => content).
+        to_return(:body => "ALA")
+
+    resp = @poster.post(url,content)
+    assert_equal "ALA", resp
+
+  end
+
+  test "raise PostError on http error" do
+
+    content = 'A kuku matutu'
+    url = 'http://localhost:8550/testservice'
+
+    stub_request(:post, url).
+        with(:body => content).
+        to_return(:body => "NOO", :status => [400, 'Bad Request'])
+
+    msg = "HTTP ERROR 400\nNOO"
+    assert_raise_with_message(Synthsys::Dspace::Poster::PostError,msg) do
+      resp = @poster.post(url,content)
+    end
+
+    stub_request(:post, url).
+        with(:body => content).
+        to_return(:status => [500, 'Server error'])
+
+    msg = "HTTP ERROR 500\n"
+    assert_raise_with_message(Synthsys::Dspace::Poster::PostError,msg) do
+      resp = @poster.post(url,content)
+    end
+  end
+
+  test "raise PostError on wrong url" do
+
+    content = 'A kuku matutu'
+    url = 'http://localhost12:8550/testservice'
+
+    err = assert_raise(Synthsys::Dspace::Poster::PostError) do
+      resp = @poster.post(url,content)
+    end
+
+    assert err.message.start_with?("Got exception:")
+
+  end
+
+  test "raise PostError on connection timeout" do
+
+    content = 'A kuku matutu'
+    url = 'http://localhost:8550/testservice'
+
+    stub_request(:post, url).
+        with(:body => content).
+        to_timeout
+
+    err = assert_raise(Synthsys::Dspace::Poster::PostError) do
+      resp = @poster.post(url,content)
+    end
+
+    assert err.message.start_with?("Got exception:")
+
+  end
+
+
 
 end

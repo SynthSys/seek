@@ -39,6 +39,13 @@ class DataSharePacksControllerTest < ActionController::TestCase
   end
 
   test "should create data_share_pack" do
+
+    #Stubing DSpace Upload URL, as currently, the deposittion is hard linked to data share pack creation
+    #bypassing the jobs subsystem
+
+    url = Synthsys::Dspace::DspaceUploaderConnector.INSTANCE.url
+    stub = stub_request(:post, url)
+
     assert_difference('DataSharePack.count') do
       #post :create, data_share_pack: { description: @data_share_pack.description, msg: @data_share_pack.msg, status: @data_share_pack.status, title: @data_share_pack.title, assay_id: @data_share_pack.assay.id }
       post :create, data_share_pack: {
@@ -57,6 +64,7 @@ class DataSharePacksControllerTest < ActionController::TestCase
       }
     end
 
+    remove_request_stub(stub)
     assert_redirected_to data_share_pack_path(assigns(:data_share_pack))
   end
 

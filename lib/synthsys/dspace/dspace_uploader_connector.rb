@@ -8,16 +8,46 @@ module Synthsys
 
       class DepositError < RuntimeError; end
 
+      @@INSTANCE = nil
+
+      def self.INSTANCE
+        if @@INSTANCE == nil
+          @@INSTANCE = DspaceUploaderConnector.new
+        end
+        return @@INSTANCE
+      end
+
+      def initialize(poster=nil,config=nil)
+        if poster == nil
+          @poster = Synthsys::Dspace::Poster.new
+        else
+          @poster = poster
+        end
+
+        if config == nil
+          @config = read_configuration
+          @alreadyConfigured = true
+        else
+          verify_config(config)
+          @config = config
+          @alreadyConfigured = true
+        end
+
+      end
+
+      def url
+        return @config.uri
+      end
+
       def deposit(dataSharePack)
         read_configuration unless @alreadyConfigured
 
-        poster = Synthsys::Dspace::Poster.new
 
         depositFile = prepareDataPackage(dataSharePack)
         begin
           deposit = prepare_deposit(dataSharePack,depositFile)
 
-          do_deposition(poster,@config.uri,deposit.to_json)
+          @poster.post(@config.uri,deposit.to_json)
         ensure
           depositFile.close
           depositFile.unlink
@@ -25,15 +55,16 @@ module Synthsys
       end
 
 
+=begin
       def do_deposition(poster,uri,deposit_string)
         response = poster.post(uri,deposit_string)
 
         case response
           when Net::HTTPSuccess then
             return true
-          when Net::HTTPResonse then
+          when Net::HTTPResponse then
             msg = 'Deposit failed'
-            if response.body_permitted?
+            if response.class.body_permitted?
               msg = "Deposit failed:\n #{response.body}"
             end
             raise DepositError.new msg
@@ -43,6 +74,7 @@ module Synthsys
         end
 
       end
+=end
 
 
       def prepare_deposit(dataSharePack,depositFile)

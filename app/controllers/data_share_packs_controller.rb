@@ -72,12 +72,13 @@ class DataSharePacksController < ApplicationController
     @data_share_pack.status = 1
 
     respond_to do |format|
+
       if @data_share_pack.save
         #SwordExportJob.new(@data_share_pack).queue_job
         begin
           logger.info "\nSending new deposit of : #{@data_share_pack.id}\n"
-          connector = Synthsys::Dspace::DspaceUploaderConnector.new
-          resp = connector.deposit(@data_share_pack)
+
+          resp = Synthsys::Dspace::DspaceUploaderConnector.INSTANCE.deposit(@data_share_pack)
 
           format.html { redirect_to @data_share_pack, notice: "Request for DataShare export was exported: #{resp}." }
           format.json { render json: @data_share_pack, status: :created, location: @data_share_pack }
@@ -87,9 +88,9 @@ class DataSharePacksController < ApplicationController
           e.backtrace.each do |s|
             logger.error(s)
           end
-          format.html { render action: "new", notice: "Error in export #{e}" }
+          @data_share_pack.errors.add(:collection,"DEPOSIT ERROR #{e}")
+          format.html { render action: "new" }
           format.json { render json: @data_share_pack.errors, status: :unprocessable_entity }
-
         end
 
 
