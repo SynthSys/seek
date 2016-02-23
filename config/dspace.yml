@@ -9,5 +9,5 @@ development:
   deposits_dir: /localdisk/seek/DSpaceUpload/DEPOSITS
 
 test:
-  uri: http://localhost:8550/deposit
-  deposits_dir: /localdisk/seek/DSpaceUpload/DEPOSITS
+  uri: http://localhost.ignore.me:8550/deposit
+  deposits_dir: FAKE/DEPOSITS

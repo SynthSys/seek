@@ -46,22 +46,30 @@ class DataSharePacksControllerTest < ActionController::TestCase
     url = Synthsys::Dspace::DspaceUploaderConnector.INSTANCE.url
     stub = stub_request(:post, url)
 
-    assert_difference('DataSharePack.count') do
-      #post :create, data_share_pack: { description: @data_share_pack.description, msg: @data_share_pack.msg, status: @data_share_pack.status, title: @data_share_pack.title, assay_id: @data_share_pack.assay.id }
-      post :create, data_share_pack: {
-          description: @data_share_pack.description,
-          title: @data_share_pack.title,
-          snapshot_id: @data_share_pack.snapshot.id,
-          funder: @data_share_pack.funder,
-          collection: @data_share_pack.collection,
-          publisher: @data_share_pack.publisher,
-          settype: @data_share_pack.settype,
-          license: @data_share_pack.license,
-          creators: @data_share_pack.creators,
-          keywords: @data_share_pack.keywords,
-          subject: @data_share_pack.subject,
-          toc: @data_share_pack.toc
-      }
+    Dir.mktmpdir('~DEPOSITS2') do |tmp|
+      nconfig = Synthsys::Dspace::DspaceUploaderConnector::Config.new
+      nconfig.uri = url
+      nconfig.deposits_dir = tmp;
+
+      Synthsys::Dspace::DspaceUploaderConnector.INSTANCE.config= nconfig
+
+        assert_difference('DataSharePack.count') do
+          #post :create, data_share_pack: { description: @data_share_pack.description, msg: @data_share_pack.msg, status: @data_share_pack.status, title: @data_share_pack.title, assay_id: @data_share_pack.assay.id }
+          post :create, data_share_pack: {
+              description: @data_share_pack.description,
+              title: @data_share_pack.title,
+              snapshot_id: @data_share_pack.snapshot.id,
+              funder: @data_share_pack.funder,
+              collection: @data_share_pack.collection,
+              publisher: @data_share_pack.publisher,
+              settype: @data_share_pack.settype,
+              license: @data_share_pack.license,
+              creators: @data_share_pack.creators,
+              keywords: @data_share_pack.keywords,
+              subject: @data_share_pack.subject,
+              toc: @data_share_pack.toc
+          }
+        end
     end
 
     remove_request_stub(stub)

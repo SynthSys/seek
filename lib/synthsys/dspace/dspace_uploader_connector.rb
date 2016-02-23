@@ -25,18 +25,21 @@ module Synthsys
         end
 
         if config == nil
-          @config = read_configuration
-          @alreadyConfigured = true
-        else
-          verify_config(config)
-          @config = config
-          @alreadyConfigured = true
+          config = read_configuration
         end
 
+        verify_config(config) unless Rails.env.test?
+        @config = config
+        @alreadyConfigured = true
       end
 
       def url
         return @config.uri
+      end
+
+      def config=(config)
+        verify_config(config)
+        @config = config;
       end
 
       def deposit(dataSharePack)
@@ -138,14 +141,10 @@ module Synthsys
       def read_configuration
         if configured?
           y = YAML.load_file(config_path)
-          @config=Config.new
-          @config.uri=y[Rails.env]["uri"]
-          @config.deposits_dir=y[Rails.env]["deposits_dir"]
-          #@config = Config.new
-          #@config.uri = 'http://localhost:8550/deposit'
-          verify_config(@config)
-          @alreadyConfigured = true
-          return @config
+          config=Config.new
+          config.uri=y[Rails.env]["uri"]
+          config.deposits_dir=y[Rails.env]["deposits_dir"]
+          return config
         else
           raise Exception.new "No configuration file found"
         end

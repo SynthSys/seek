@@ -31,7 +31,14 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
   def setup
     @poster = MockPoster.new
 
-    @connector = Synthsys::Dspace::DspaceUploaderConnector.new(@poster,nil)
+    @dir = Dir.mktmpdir('~DEPOSITS')
+    @url = 'http://localhost.fake/deposit'
+
+    @config = Synthsys::Dspace::DspaceUploaderConnector::Config.new
+    @config.uri = @url
+    @config.deposits_dir = @dir
+
+    @connector = Synthsys::Dspace::DspaceUploaderConnector.new(@poster,@config)
     @dataSharePack = data_share_packs(:first_data_share)
     @dataSharePack.snapshot = create_snapshot
   end
@@ -40,7 +47,7 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
   # down fixture information.
 
   def teardown
-    # Do nothing
+    FileUtils.remove_dir(@dir)
   end
 
   def test_INSTANCE
@@ -185,6 +192,22 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
   end
 
+  def test_updateconfig
+
+    nconfig = Synthsys::Dspace::DspaceUploaderConnector::Config.new
+
+    Dir.mktmpdir('~DEPOSITS2') do |tmp|
+      nconfig.uri = @url+'/23'
+      nconfig.deposits_dir = tmp;
+
+      @connector.config= nconfig
+      assert_equal nconfig.uri,@connector.url
+    end
+
+    assert_raise(RuntimeError) {@connector.config= nconfig}
+
+  end
+
   def test_configured
     assert @connector.configured?
   end
@@ -193,8 +216,8 @@ class DspaceUploaderConnectorTest < ActiveSupport::TestCase
 
     config = @connector.read_configuration
     assert_not_nil config
-    assert_equal 'http://localhost:8550/deposit',config.uri
-    assert_equal '/localdisk/seek/DSpaceUpload/DEPOSITS',config.deposits_dir
+    assert_equal 'http://localhost.ignore.me:8550/deposit',config.uri
+    assert_equal 'FAKE/DEPOSITS',config.deposits_dir
   end
 
   def test_verifies_configuration
